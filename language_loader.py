@@ -10,10 +10,11 @@ from pathlib import Path
 import importlib.util
 import os
 
-def turtle_creator(name):
+def hatchling_spawner(name):
+    """This function creates hatchlings that will some day grow into turtles.
+    """
     class TurtleStandIn:
-        # Pretend like there's many nice methods to override in here.
-        pass
+        """Pretend like there's many nice methods to override in here."""
 
         def import_test():
             print("I imported correctly.")
@@ -22,20 +23,24 @@ def turtle_creator(name):
     return TurtleStandIn
 
 def load_language(language: str):
-    """If the requested language has a translation file
+    """If the requested language has a translation file then we will create
+    a global object using that translations module_name as the global module
+    name. All English methods that have been translated will be changed to
+    their new translated name.
     """
     language_file = language + ".py"
     plugin_path = Path(os.path.realpath(__file__)).parents[0] / "translations" / language_file
 
     # This section taken from
     # https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
+
     spec = importlib.util.spec_from_file_location("translation_file", str(plugin_path))
     translation_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(translation_module)
 
     # Tortuga setup goes here
 
-    hatchling = turtle_creator(translation_module.__module_name__)
+    hatchling = hatchling_spawner(translation_module.__module_name__)
 
     for spanish_name in translation_module._LANGUAGE_IDENTIFIERS.values():
         # We'll need to grab the English name from the real turtle and then
